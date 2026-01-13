@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}NexLink - Analytics for {{ link.short_code }}{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Header -->
+    <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <nav class="flex items-center gap-2 text-sm font-bold text-slate-400 mb-4">
+                <a href="{% url 'dashboard' %}" class="hover:text-primary transition-colors">Dashboard</a>
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                <span class="text-slate-900">Analytics</span>
+            </nav>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight break-all">
+                {{ request.get_host }}/{{ link.short_code }}
+            </h1>
+            <p class="text-slate-500 font-medium mt-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">link</span>
+                {{ link.original_url|truncatechars:60 }}
+            </p>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="navigator.clipboard.writeText('{{ request.get_host }}/{{ link.short_code }}')"
+                class="bg-white border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">content_copy</span>
+                Copy Link
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div class="bg-white p-8 rounded-3xl shadow-soft border border-slate-100">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Total Clicks</h3>
+            <p class="text-5xl font-black text-slate-900">{{ total_clicks }}</p>
+            <div class="mt-4 flex items-center gap-2 text-green-500 font-bold text-sm">
+                <span class="material-symbols-outlined text-[18px]">trending_up</span>
+                All time
+            </div>
+        </div>
+        <div class="bg-white p-8 rounded-3xl shadow-soft border border-slate-100">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Created On</h3>
+            <p class="text-2xl font-black text-slate-900">{{ link.created_at|date:"F d, Y" }}</p>
+            <p class="text-slate-500 text-xs font-bold mt-4 uppercase tracking-wider">
+                {{ link.created_at|timesince }} ago
+            </p>
+        </div>
+        <div class="bg-white p-8 rounded-3xl shadow-soft border border-slate-100">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Status</h3>
+            <div class="flex items-center gap-3 mt-1">
+                <div class="size-3 rounded-full bg-green-500 animate-pulse"></div>
+                <p class="text-2xl font-black text-slate-900">Active</p>
+            </div>
+            <p class="text-slate-500 text-xs font-bold mt-5 uppercase tracking-wider">
+                Collecting signatures
+            </p>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="bg-white p-8 sm:p-10 rounded-3xl shadow-soft border border-slate-100 mb-12">
+        <div class="flex items-center justify-between mb-10">
+            <h3 class="text-xl font-black text-slate-900 tracking-tight">Click Performance</h3>
+            <div class="bg-slate-50 p-1 rounded-lg flex items-center gap-1">
+                <span class="px-4 py-1.5 bg-white shadow-sm rounded-md text-xs font-bold text-primary">Last 7
+                    Days</span>
+            </div>
+        </div>
+        <div class="h-[400px] w-full">
+            <canvas id="clicksChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('clicksChart').getContext('2d');
+    const chartLabels = {{ chart_labels| safe }};
+    const chartData = {{ chart_values| safe }};
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Clicks',
+                data: chartData,
+                borderColor: '#0062ff',
+                backgroundColor: 'rgba(0, 98, 255, 0.05)',
+                borderWidth: 4,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#0062ff',
+                pointBorderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.03)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: { weight: 'bold', size: 12 },
+                        color: '#94a3b8'
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { weight: 'bold', size: 12 },
+                        color: '#94a3b8'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

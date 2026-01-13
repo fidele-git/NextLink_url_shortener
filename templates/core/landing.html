@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}NexLink - Premium URL Shortener{% endblock %}
+
+{% block content %}
+<section class="w-full px-4 sm:px-10 py-12 sm:py-24 flex flex-col items-center">
+    <div class="max-w-[800px] w-full flex flex-col items-center gap-10 text-center">
+        <div class="flex flex-col gap-6">
+            <h1 class="text-slate-900 text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] tracking-tight">
+                Shorten your reach,<br /><span class="text-primary">expand for brand</span>
+            </h1>
+            <h2 class="text-slate-500 text-lg sm:text-xl font-medium leading-relaxed max-w-2xl mx-auto">
+                Simple, powerful, and built for growth. Manage your connections with ease.
+            </h2>
+        </div>
+
+        <!-- Input Field Container -->
+        <div class="w-full max-w-[620px] flex flex-col gap-4">
+
+            {% if error %}
+            <div
+                class="w-full bg-red-50 text-red-500 text-sm font-bold p-4 rounded-xl border border-red-100 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">error</span>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <div class="bg-white p-2.5 rounded-2xl shadow-soft border border-slate-200">
+                <form hx-post="{% url 'shorten' %}" hx-target="#short-link-container" hx-swap="outerHTML"
+                    class="flex flex-col gap-2 w-full">
+                    {% csrf_token %}
+
+                    <!-- URL Input and Button Row -->
+                    <div class="flex flex-col sm:flex-row h-auto sm:h-16 w-full gap-2 sm:gap-0">
+                        <div class="flex w-full flex-1 items-stretch rounded-xl h-16 sm:h-full group">
+                            <div
+                                class="text-slate-400 flex items-center justify-center pl-5 bg-transparent transition-colors group-focus-within:text-primary">
+                                <span class="material-symbols-outlined text-[20px]">link</span>
+                            </div>
+                            <input name="original_url" required type="url" value="{{ original_url|default:'' }}"
+                                class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-slate-900 focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-slate-400 px-5 text-base font-medium"
+                                placeholder="Paste your long link here..." />
+                        </div>
+                        <button type="submit"
+                            class="flex min-w-[140px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 sm:h-full px-8 bg-primary hover:bg-blue-700 text-white text-base font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98] sm:ml-2">
+                            <span class="truncate">Shorten</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div id="short-link-container" class="w-full max-w-[620px]">
+            {% if recent_links %}
+            <div class="mt-8 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <h3 class="text-left text-xs font-black text-slate-400 uppercase tracking-widest pl-2">Your Recent Links
+                </h3>
+                <div class="space-y-3">
+                    {% for link in recent_links %}
+                    <div
+                        class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:shadow-soft transition-all">
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div
+                                class="size-10 rounded-xl bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">link</span>
+                            </div>
+                            <div class="flex flex-col truncate">
+                                <a href="{% url 'redirect' link.short_code %}"
+                                    class="text-sm font-bold text-slate-900 hover:text-primary transition-colors truncate">
+                                    {{ request.get_host }}/{{ link.short_code }}
+                                </a>
+                                <span class="text-[10px] font-bold text-slate-400 truncate">{{ link.original_url
+                                    }}</span>
+                            </div>
+                        </div>
+                        <button onclick="copyToClipboard('{{ request.get_host }}/{{ link.short_code }}')"
+                            class="size-8 rounded-lg bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all">
+                            <span class="material-symbols-outlined text-[16px]">content_copy</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Features Preview (Based on image) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-[900px] mt-12">
+            <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'account_signup' %}{% endif %}"
+                class="bg-white p-6 rounded-2xl border border-slate-100 shadow-soft flex flex-col items-center gap-4 text-center group hover:border-primary/20 hover:scale-[1.02] transition-all">
+                <div
+                    class="size-12 rounded-xl bg-blue-50 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                    <span class="material-symbols-outlined text-[24px]">analytics</span>
+                </div>
+                <div>
+                    <h3 class="text-slate-900 font-bold">Real-time Analytics</h3>
+                    <p class="text-slate-500 text-sm mt-1">Track every click in real-time.</p>
+                </div>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'account_signup' %}{% endif %}"
+                class="bg-white p-6 rounded-2xl border border-slate-100 shadow-soft flex flex-col items-center gap-4 text-center group hover:border-primary/20 hover:scale-[1.02] transition-all">
+                <div
+                    class="size-12 rounded-xl bg-blue-50 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                    <span class="material-symbols-outlined text-[24px]">link</span>
+                </div>
+                <div>
+                    <h3 class="text-slate-900 font-bold">Custom Links</h3>
+                    <p class="text-slate-500 text-sm mt-1">Branded links for your business.</p>
+                </div>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'account_signup' %}{% endif %}"
+                class="bg-white p-6 rounded-2xl border border-slate-100 shadow-soft flex flex-col items-center gap-4 text-center group hover:border-primary/20 hover:scale-[1.02] transition-all">
+                <div
+                    class="size-12 rounded-xl bg-blue-50 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                    <span class="material-symbols-outlined text-[24px]">qr_code</span>
+                </div>
+                <div>
+                    <h3 class="text-slate-900 font-bold">QR Generation</h3>
+                    <p class="text-slate-500 text-sm mt-1">Instantly generate QR codes.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+{% endblock %}

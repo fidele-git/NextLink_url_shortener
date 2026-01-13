@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+
+{% block title %}NexLink - Login{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div
+        class="w-full max-w-md space-y-8 relative z-10 bg-white p-8 sm:p-10 rounded-3xl shadow-soft border border-slate-100">
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-black tracking-tight text-slate-900 mb-2">Welcome Back</h1>
+            <p class="text-slate-500 text-sm font-medium">Log in to manage your shortened links.</p>
+        </div>
+
+        <!-- Social Auth (Google) -->
+        <div class="space-y-4">
+            <a href="{% provider_login_url 'google' %}"
+                class="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-700 font-bold h-12 px-4 rounded-xl transition-all shadow-sm border border-slate-200 group">
+                <img alt="Google Logo" class="w-5 h-5"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHm1W50OzUMLcA4z_wyJd73hGqfC-oIQqVJMl1PnoylxYt6VXXCKilFcZ8xUlsmm7o3P6f77kAL7sqR7jCpjYC4y8P_1Fc1gXlgfjvyqAA0_9Yof6LVhxGWWufO9nQzMmZ8CX_dzXc7vPH595VaK2KqJ-XVA5i19yvOk2QAMiDv7fUUwA7P6DFx_BdZaWll_N8B0rGf-2B6J3mKL5VeB3lqWkhk0kCfR8J6tfqXZ2ktlQTytMstIKyHf7uZ8jo_yzriQMsDk3Iz8" />
+                <span>Continue with Google</span>
+            </a>
+
+            <div class="relative py-2">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-100"></div>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase"><span
+                        class="bg-white px-4 text-slate-400 font-bold">Or log in with Email</span></div>
+            </div>
+        </div>
+
+        <form class="space-y-6" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm font-medium italic">
+                Invalid email or password.
+            </div>
+            {% endif %}
+
+            <div class="space-y-5">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700" for="id_login">Email Address</label>
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">mail</span>
+                        </div>
+                        <input type="email" name="login" id="id_login" required autocomplete="email"
+                            class="block w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all outline-none text-sm font-medium"
+                            placeholder="name@company.com" />
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-bold text-slate-700" for="id_password">Password</label>
+                        <a href="{% url 'account_reset_password' %}"
+                            class="text-xs font-bold text-primary hover:underline">Forgot?</a>
+                    </div>
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">lock</span>
+                        </div>
+                        <input type="password" name="password" id="id_password" required autocomplete="current-password"
+                            class="block w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all outline-none text-sm font-medium"
+                            placeholder="••••••••" />
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full flex justify-center items-center bg-primary hover:bg-blue-700 text-white text-base font-bold h-14 px-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all transform active:scale-[0.98]">
+                Log In
+            </button>
+        </form>
+
+        <div class="text-center pt-2">
+            <p class="text-sm text-slate-400">
+                Don't have an account? <a href="{% url 'account_signup' %}"
+                    class="text-blue-500 font-bold hover:underline transition-all">Sign Up</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+{% endblock %}

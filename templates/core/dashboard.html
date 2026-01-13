@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}NexLink - Dashboard{% endblock %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex flex-col gap-10">
+        <div class="flex flex-col gap-6">
+            <div class="flex flex-col gap-2">
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight">Your Dashboard</h1>
+                <p class="text-slate-500 font-medium">Manage and track your shortened links performance.</p>
+            </div>
+
+            <!-- Dashboard Create Link Form -->
+            <div class="bg-white p-6 rounded-3xl shadow-soft border border-slate-100">
+                <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Create New Link</h2>
+                <form method="post" action="{% url 'shorten' %}" class="flex flex-col gap-4">
+                    {% csrf_token %}
+                    <div class="flex flex-col gap-6">
+                        <!-- Main URL Input -->
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-bold text-slate-700 ml-1">Destination URL</label>
+                            <div
+                                class="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                                <span class="material-symbols-outlined text-slate-400 mr-2">link</span>
+                                <input type="url" name="original_url" required
+                                    placeholder="Paste your long link here..."
+                                    class="bg-transparent border-none focus:ring-0 w-full text-base font-medium text-slate-900 placeholder:text-slate-400">
+                            </div>
+                        </div>
+
+                        <!-- Custom Alias Section -->
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-[20px]">magic_button</span>
+                                    <span class="text-sm font-bold text-slate-900">Customize Link</span>
+                                </div>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Optional</span>
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-bold text-slate-500 ml-1">Custom Alias</label>
+                                <div
+                                    class="flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                                    <span class="text-slate-400 text-sm font-bold mr-1">{{ request.get_host }}/</span>
+                                    <input type="text" name="custom_code" placeholder="my-brand-po"
+                                        class="bg-transparent border-none focus:ring-0 w-full text-sm font-medium text-slate-900 placeholder:text-slate-400 p-0">
+                                </div>
+                                <p class="text-[11px] font-medium text-slate-400 ml-1">Leave empty for a random short
+                                    code.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="w-full sm:w-auto bg-primary hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 h-[48px] flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-[20px]">bolt</span>
+                                Shorten Link
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50 border-b border-slate-100">
+                            <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Link
+                                Details</th>
+                            <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">
+                                Performance</th>
+                            <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for link in links %}
+                        <tr class="hover:bg-slate-50/30 transition-colors group">
+                            <td class="px-8 py-6">
+                                <div class="flex flex-col gap-1.5 max-w-md">
+                                    <a href="{% url 'redirect' link.short_code %}" target="_blank"
+                                        class="text-lg font-bold text-slate-900 hover:text-primary transition-colors flex items-center gap-2">
+                                        {{ request.get_host }}/{{ link.short_code }}
+                                        <span
+                                            class="material-symbols-outlined text-[16px] text-slate-300 group-hover:text-primary">open_in_new</span>
+                                    </a>
+                                    <div class="flex flex-col gap-0.5">
+                                        <span class="text-xs font-medium text-slate-400 line-clamp-1 break-all"
+                                            title="{{ link.original_url }}">{{ link.original_url }}</span>
+                                        <!-- prettier-ignore -->
+                                        <span class="text-[10px] font-bold text-slate-400">{{ link.formatted_date
+                                            }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex flex-col">
+                                        <span class="text-2xl font-black text-slate-900">{{ link.clicks_count }}</span>
+                                        <span
+                                            class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total
+                                            Clicks</span>
+                                    </div>
+                                    <div class="h-8 w-px bg-slate-100 mx-2"></div>
+                                    <div class="flex flex-col text-green-500">
+                                        <div class="flex items-center gap-1">
+                                            <span
+                                                class="material-symbols-outlined text-[14px] font-bold">trending_up</span>
+                                            <span class="text-[10px] font-bold">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-6">
+                                <div class="flex items-center gap-2">
+                                    <button hx-get="{% url 'generate_qr' link.short_code %}" hx-target="body"
+                                        hx-swap="beforeend"
+                                        class="size-10 rounded-xl bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all"
+                                        title="Generate QR Code"><span
+                                            class="material-symbols-outlined text-[20px]">qr_code</span></button>
+                                    <a href="{% url 'link_analysis' link.short_code %}"
+                                        class="size-10 rounded-xl bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                                        title="View Analytics"><span
+                                            class="material-symbols-outlined text-[20px]">analytics</span></a>
+                                    <button onclick="copyToClipboard('{{ request.get_host }}/{{ link.short_code }}')"
+                                        class="size-10 rounded-xl bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all"
+                                        title="Copy Short Link"><span
+                                            class="material-symbols-outlined text-[20px]">content_copy</span></button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="px-8 py-20 text-center">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div
+                                        class="size-16 rounded-2xl bg-slate-50 text-slate-300 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-[32px]">link_off</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <p class="text-slate-900 font-bold">No links created yet</p>
+                                        <p class="text-slate-500 text-sm font-medium">Start by shortening your first
+                                            long URL.</p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}NexLink - My Profile{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-3xl shadow-soft border border-slate-100 p-8 sm:p-12">
+        <div class="flex flex-col items-center mb-12 text-center">
+            <div
+                class="size-24 bg-primary rounded-full flex items-center justify-center text-white text-4xl mb-6 font-black shadow-lg shadow-blue-500/20">
+                <span>{{ initials }}</span>
+            </div>
+            <h2 class="text-4xl font-black text-slate-900 tracking-tight"><span>{{ user_name }}</span></h2>
+            <p class="text-slate-500 font-medium"><span>{{ user.email }}</span></p>
+            <p class="text-slate-500 font-medium mt-2">NexLink Member since <span>{{ member_since|date:"F Y" }}</span>
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div
+                class="bg-slate-50/50 p-8 rounded-2xl border border-slate-100 group hover:border-primary/20 transition-all">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Total Links Created</h3>
+                <p class="text-5xl font-black text-slate-900 group-hover:text-primary transition-colors">
+                    <span id="links-count-val" data-val="{{ links_count }}">...</span>
+                </p>
+            </div>
+            <div
+                class="bg-slate-50/50 p-8 rounded-2xl border border-slate-100 group hover:border-primary/20 transition-all">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Account Settings</h3>
+                <p class="text-slate-500 text-sm font-medium mb-6">Manage your personal information and preferences
+                    safely.</p>
+                <a href="{% url 'edit_profile' %}"
+                    class="text-primary font-bold hover:underline flex items-center gap-2">Edit Profile <span
+                        class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const el = document.getElementById('links-count-val');
+        if (el) el.innerText = el.getAttribute('data-val');
+    });
+</script>
+{% endblock %}
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+{% endblock %}

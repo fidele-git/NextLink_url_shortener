@@ -1,0 +1,29 @@
+# NexLink Requirements
+# Python 3.8+
+
+# Django Framework
+Django==5.1.4
+django-environ==0.11.2
+
+# Database
+psycopg2-binary==2.9.10
+
+# Authentication
+django-allauth==65.3.0
+
+# Admin Interface
+django-unfold==0.45.0
+
+# HTMX Support
+django-htmx==1.21.0
+
+# Caching
+django-redis==5.4.0
+redis==5.2.1
+
+# QR Code Generation
+qrcode==8.0
+Pillow==11.0.0
+
+# Utilities
+python-dateutil==2.9.0.post0
