@@ -176,8 +176,10 @@ LOGOUT_REDIRECT_URL = 'landing'
 # Security
 SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT')
 if not DEBUG:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # Only enable secure cookies if we are actually redirecting to SSL
+    if SECURE_SSL_REDIRECT:
+        SESSION_COOKIE_SECURE = True
+        CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
