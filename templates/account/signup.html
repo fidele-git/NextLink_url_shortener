@@ -13,13 +13,19 @@
         </div>
 
         <!-- Social Auth (Google) -->
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
         <div class="space-y-4">
-            <a href="{% provider_login_url 'google' %}"
+            {% for provider in socialaccount_providers %}
+            {% if provider.id == "google" %}
+            <a href="{% provider_login_url provider.id %}"
                 class="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-700 font-bold h-12 px-4 rounded-xl transition-all shadow-sm border border-slate-200 group">
                 <img alt="Google Logo" class="w-5 h-5"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHm1W50OzUMLcA4z_wyJd73hGqfC-oIQqVJMl1PnoylxYt6VXXCKilFcZ8xUlsmm7o3P6f77kAL7sqR7jCpjYC4y8P_1Fc1gXlgfjvyqAA0_9Yof6LVhxGWWufO9nQzMmZ8CX_dzwXc7vPH595VaK2KqJ-XVA5i19yvOk2QAMiDv7fUUwA7P6DFx_BdZaWll_N8B0rGf-2B6J3mKL5VeB3lqWkhk0kCfR8J6tfqXZ2ktlQTytMstIKyHf7uZ8jo_yzriQMsDk3Iz8" />
-                <span>Continue with Google</span>
+                <span>Continue with {{ provider.name }}</span>
             </a>
+            {% endif %}
+            {% endfor %}
 
             <div class="relative py-2">
                 <div class="absolute inset-0 flex items-center">
@@ -29,6 +35,7 @@
                         class="bg-white px-4 text-slate-400 font-bold">Or continue with Email</span></div>
             </div>
         </div>
+        {% endif %}
 
         <form class="space-y-6" method="POST" action="{% url 'account_signup' %}">
             {% csrf_token %}
@@ -61,6 +68,19 @@
                             <span class="material-symbols-outlined text-[20px]">lock</span>
                         </div>
                         <input type="password" name="password1" id="id_password1" required autocomplete="new-password"
+                            class="block w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all outline-none text-sm font-medium"
+                            placeholder="••••••••" />
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700" for="id_password2">Confirm Password</label>
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">lock_reset</span>
+                        </div>
+                        <input type="password" name="password2" id="id_password2" required autocomplete="new-password"
                             class="block w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all outline-none text-sm font-medium"
                             placeholder="••••••••" />
                     </div>
