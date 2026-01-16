@@ -1,6 +1,8 @@
 import os
 import environ
 from pathlib import Path
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -106,7 +108,7 @@ WSGI_APPLICATION = 'nexlink_project.wsgi.application'
 # Database
 # Use DATABASE_URL from .env or fallback to sqlite
 DATABASES = {
-    'default': env.db('DATABASE_URL', default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
+    'default': env.db('DATABASE_URL')
 }
 
 
