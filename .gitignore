@@ -29,11 +29,13 @@ db.sqlite3
 db.sqlite3-journal
 /staticfiles/
 /media/
+local_settings.py
 
 # Environment Variables
 .env
 .env.local
 .env.*.local
+.envrc
 
 # IDE
 .vscode/
@@ -63,3 +65,7 @@ coverage.xml
 # OS
 Thumbs.db
 .DS_Store
+
+# Cursor/AI
+.cursorignore
+.cursorindexingignore
