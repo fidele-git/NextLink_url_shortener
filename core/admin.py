@@ -1,11 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from unfold.admin import ModelAdmin
-from unfold.contrib.auth.admin import UserAdmin
 from .models import User, Link, Click
 
 @admin.register(User)
-class CustomUserAdmin(UserAdmin, ModelAdmin):
+class CustomUserAdmin(BaseUserAdmin, ModelAdmin):
     list_display = ('email', 'username', 'first_name', 'last_name', 'is_staff', 'is_active')
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('email',)
